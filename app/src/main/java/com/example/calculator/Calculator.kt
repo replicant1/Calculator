@@ -37,9 +37,16 @@ class Holder(val callMe: CallMe) {
     }
 }
 
-//class Operators {
-//    fun add(m: Int, n: Int): Int = m + n
-//    fun subtract(n: Int, m: Int): Int = n - m
-//    fun multiply(c: Int, a: Int): Int = c * a
-//    fun divide(l: Int, d: Int): Int = l / d
-//}
+interface Maker {
+    fun result() : Int
+}
+
+interface Adder {
+    fun add(a:Int, b:Int): Int
+    fun getInt() : Int
+    fun getString() : String
+}
+
+fun Maker.scooby() : String = "Scooby"
+
+data class Team(val speed : Int, val door: Boolean)

@@ -6,6 +6,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.justRun
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
@@ -160,5 +161,35 @@ class CalculatorTest {
         every { mockedCalculator.add(less(5), less(5)) } returns 2
         assertEquals(1, mockedCalculator.add(66, 67))
         assertEquals(2, mockedCalculator.add(2, 3))
+    }
+
+    @Test
+    fun test_multiple_results() {
+        val holder = mockk<Maker>()
+        every { holder.result() } returns 5 andThen 10 andThen 15
+        assertEquals(5, holder.result())
+        assertEquals(10, holder.result())
+        assertEquals(15, holder.result())
+    }
+
+    @Test
+    fun test_returns_lambda() {
+        every { mockedCalculator.add(any(), any()) } answers { arg<Int>(0) * arg<Int>(1) }
+        assertEquals(35, mockedCalculator.add(7, 5))
+    }
+
+    @Test
+    fun test_relaxed() {
+        val adder = mockk<Adder>(relaxed = true)
+        assertEquals(0, adder.getInt())
+        assertEquals("", adder.getString())
+        assertEquals(0, adder.add(1, 2))
+    }
+
+    @Test
+    fun `test properties`() {
+        val team = spyk(Team(10, true))
+        every { team getProperty "speed"} returns 20
+        assertEquals(20, team.speed) // 20, not 10
     }
 }
