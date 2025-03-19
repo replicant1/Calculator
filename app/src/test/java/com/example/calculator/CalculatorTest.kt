@@ -189,7 +189,18 @@ class CalculatorTest {
     @Test
     fun `test properties`() {
         val team = spyk(Team(10, true))
-        every { team getProperty "speed"} returns 20
+        every { team getProperty "speed" } returns 20
         assertEquals(20, team.speed) // 20, not 10
+    }
+
+    @Test
+    fun test_returns_answer_with_side_effect() {
+        var side_effect = 2
+        every { mockedCalculator.add(any(), any()) } answers {
+            side_effect = 9
+            5
+        }
+        assertEquals(5, mockedCalculator.add(6, 7))
+        assertEquals(9, side_effect)
     }
 }
