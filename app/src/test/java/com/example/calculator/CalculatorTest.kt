@@ -203,4 +203,20 @@ class CalculatorTest {
         assertEquals(5, mockedCalculator.add(6, 7))
         assertEquals(9, side_effect)
     }
+
+    @Test
+    fun `test args to stubbed method`() {
+        every { mockedCalculator.add(any(), any()) } answers {
+            val numbers = args as List<Int>
+            numbers.sum()
+        }
+        assertEquals(5, mockedCalculator.add(2, 3))
+    }
+
+    @Test
+    fun `test verify any`() {
+        every { mockedCalculator.add(any(), any()) } returns 0
+        mockedCalculator.add(2, 3)
+        verify { mockedCalculator.add(2, any()) }
+    }
 }
