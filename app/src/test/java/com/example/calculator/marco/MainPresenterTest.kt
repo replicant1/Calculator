@@ -3,12 +3,12 @@ package com.example.calculator.marco
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
-import net.bytebuddy.pool.TypePool.Resolution.Illegal
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -58,6 +58,22 @@ class MainPresenterTest {
         // Note: How to verify a method *isn't* called.
         verify(exactly = 0) { mockedView.onResult(any()) }
         verify(exactly = 1) { mockedView.onError(any()) }
+    }
+
+    @Test
+    fun `test fetchData with custom UUID generation`() {
+        mockkObject(MyUtilObject)
+        every { MyUtilObject.generateUUID() } returns "FAKE_UUID"
+        every { mockedRepository.fetchData() } returns listOf(DataModel(1, "Value"))
+        mockedPresenter.fetchData()
+
+        val captureData = slot<List<UiDataModel>>()
+
+        verify(exactly = 1) { mockedView.onResult(capture(captureData))}
+        captureData.captured.let { res ->
+            assert(res.isNotEmpty())
+            assertEquals("FAKE_UUID", res.first().uuid)
+        }
     }
 
 }
