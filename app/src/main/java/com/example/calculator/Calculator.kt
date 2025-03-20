@@ -50,3 +50,29 @@ interface Adder {
 fun Maker.scooby() : String = "Scooby"
 
 data class Team(val speed : Int, val door: Boolean)
+
+interface Car
+
+class TrafficSystem {
+    lateinit var car1: Car
+    lateinit var car2: Car
+}
+
+class Bob() {
+    fun doBob() {
+        println("Before publicMethod")
+        publicMethod()
+        println("After publicMethod")
+        privateMethod()
+        println("After privateMethod")
+    }
+
+    fun publicMethod() {
+        println("Into publicMethod")
+    }
+
+    private fun privateMethod() {
+        println("Into privateMethod")
+    }
+
+}

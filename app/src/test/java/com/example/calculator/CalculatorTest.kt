@@ -3,7 +3,9 @@ package com.example.calculator
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.OverrideMockKs
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -218,5 +220,37 @@ class CalculatorTest {
         every { mockedCalculator.add(any(), any()) } returns 0
         mockedCalculator.add(2, 3)
         verify { mockedCalculator.add(2, any()) }
+    }
+
+    var car1 = mockk<Car>()
+    var car2 = mockk<Car>()
+
+    @OverrideMockKs
+    var pair = TrafficSystem() // car1 and car2 above get injected into pair.
+
+    @Test
+    fun `test inject dependencies`() {
+        println("*** pair = $pair")
+        println("*** pair.car1 = ${pair.car1}")
+        println("*** pair.car2 = ${pair.car2}")
+    }
+
+    @Test
+    fun `test sequence of results`() {
+        every { mockedCalculator.add(any(), any()) } returns 10 andThen 20
+        val result1 = mockedCalculator.add(0, 0)
+        val result2 = mockedCalculator.add(0, 0)
+        val result3 = mockedCalculator.add(0, 0)
+        assertEquals(10, result1)
+        assertEquals(20, result2)
+        assertEquals(20, result3)
+    }
+
+    @Test
+    fun `test private method invoked`() {
+        val bob = spyk<Bob>(recordPrivateCalls = true)
+        bob.doBob()
+        verify { bob["privateMethod"]() }
+        verify { bob.publicMethod() }
     }
 }
